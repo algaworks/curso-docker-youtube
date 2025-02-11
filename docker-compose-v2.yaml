@@ -1,0 +1,31 @@
+services:
+  algatransito-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: algatransito-api
+    environment:
+      DB_HOST: mysql
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - algatransito-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: algatransito
+      MYSQL_USER: alga
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    networks:
+      - algatransito-network
+
+networks:
+  algatransito-network:
+    driver: bridge

@@ -1,0 +1,41 @@
+services:
+  algatransito-api:
+    build:
+      context: .
+      dockerfile: multistage.Dockerfile
+    container_name: algatransito-api
+    environment:
+      DB_HOST: mysql
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      # caso tenha PROBLEMAS com ordem de execucao, descomentar o depends_on com condicao Healthy 
+      # mysql:
+      #   condition: service_healthy
+    networks:
+      - algatransito-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: algatransito
+      MYSQL_USER: alga
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    networks:
+      - algatransito-network
+    # caso tenha PROBLEMAS com ordem de execucao, descomentar o Healthcheck
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 10s
+
+networks:
+  algatransito-network:
+    driver: bridge
